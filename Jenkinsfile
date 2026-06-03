@@ -1,9 +1,13 @@
 pipeline {
     agent any
-    tools {
-        maven 'Maven3'
-    }
+
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Build') {
             steps {
@@ -13,13 +17,17 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t my-app .'
+                sh 'docker build -t my-app:latest .'
             }
         }
 
         stage('Run') {
             steps {
-                sh 'docker run -d -p 8080:8080 my-app'
+                sh '''
+                    docker stop my-app || true
+                    docker rm my-app || true
+                    docker run -d -p 8080:8080 --name my-app my-app:latest
+                '''
             }
         }
     }
