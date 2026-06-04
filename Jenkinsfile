@@ -23,6 +23,7 @@ pipeline {
 
         stage('Run') {
             steps {
+                echo 'runnin the container'
                 sh '''
                     docker stop my-app || true
                     docker rm my-app || true
